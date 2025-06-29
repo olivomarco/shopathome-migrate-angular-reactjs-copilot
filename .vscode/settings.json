@@ -9,6 +9,7 @@
   "staticWebApps.appSubpath": "/svelte-app",
   "staticWebApps.apiSubpath": "api",
   "staticWebApps.outputSubpath": "public",
+  "chat.promptFiles": true,
   "workbench.colorCustomizations": {
     "activityBar.activeBackground": "#832561",
     "activityBar.activeBorder": "#121907",
