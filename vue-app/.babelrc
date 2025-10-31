@@ -1,6 +1,0 @@
-{
-    "presets": [
-      "@vue/babel-preset-app",
-      "@babel/preset-env"
-    ]
-  }

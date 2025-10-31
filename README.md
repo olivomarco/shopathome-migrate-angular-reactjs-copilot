@@ -1,5 +1,19 @@
 # About the Shop at Home app
 
+**IMPORTANT NOTE**: this project was take from [this repo](https://github.com/johnpapa/shopathome) and modified to fit a scenario where an Angular App needs to be converted to React using Vite and TypeScript.
+
+## How to demonstrate
+
+1. In a terminal, run the `npm install && npm run start` command in the `api` folder to start the backend API.
+2. In another terminal, run the `npm install && npm run dev` command in the `app` folder to start the Angular frontend app.
+3. Open a browser and navigate to `http://localhost:4200` to see the Shop at Home app in action. Demonstrate it.
+4. Show the `.github/copilot-instructions.md` and `.github/prompts/migrate.prompt.md` files to explain how the migration will be done.
+5. In GitHub Copilot chat, type `/migrate` to start the migration process from Angular to React. The `react` folder will be created and populated step by step. Stress that this is a sample pet project, but the reality is not that far, except that it will take way more time and potentially more tests and iterations.
+6. The `react-output` folder (it contains the actual migrated code already, useful in case you want to show what you can obtain).
+7. Connnect to `http://localhost:5173` to see the React version of the Shop at Home app in action. Demonstrate it.
+
+## Original README follows
+
 The [Shop at Home app](https://www.shopathome.dev) allows customers to securely add, edit, view, and remove items such as food and household needs from their list. 
 
 This repository contains apps that can be used with as a starting point for some MS Learn Modules. because everyone has their own preference for their JavaScript frameworks/library, you can choose which one best suits your preferences and requirements.
