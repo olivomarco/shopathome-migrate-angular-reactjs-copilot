@@ -1,7 +1,3 @@
----
-applyTo: 'app/**'
----
-
 # Copilot Instructions for Shop At Home Rollover Project
 
 This project converts an Angular v18 application (in `/app`) to the latest React version with TypeScript support.
@@ -11,8 +7,7 @@ This project converts an Angular v18 application (in `/app`) to the latest React
 - **DO NOT** create a new workspace for the conversion
 - The new React application must be placed in a `./react` directory within the existing workspace
 - Maintain the existing API structure in `/api` (Azure Functions)
-- Preserve the existing `/fastify-api-server` for local development
-- Keep all existing apps (`/angular-app`, `/react-app`, `/svelte-app`, `/vue-app`) intact
+- Keep all existing apps (`/app`) intact
 
 ## React Setup Requirements
 
@@ -63,6 +58,39 @@ This project converts an Angular v18 application (in `/app`) to the latest React
 - Convert Angular interceptors to Axios interceptors or custom fetch wrappers
 - Maintain the same API endpoints structure
 
+### API Configuration and CORS
+- **DO NOT modify the Azure Functions API** (`/api` directory) to fix CORS or other issues
+- **ALWAYS use Vite proxy** for local development to avoid CORS problems
+- Configure Vite proxy in `vite.config.ts` to forward `/api` requests to `http://localhost:7071` when running locally in development environment
+- Set `VITE_API_URL=/api` in `.env.development` (relative path, not full URL)
+- Set `VITE_API_URL=/api` in `.env.production` for Azure Static Web Apps deployment
+
+**Required Vite proxy configuration:**
+```typescript
+// vite.config.ts
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:7071',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
+})
+```
+
+**Environment variable setup:**
+```dotenv
+# .env.development
+VITE_API_URL=/api
+
+# .env.production
+VITE_API_URL=/api
+```
+
 ### Forms
 - Replace Angular Reactive Forms with React Hook Form or Formik
 - Convert Angular validators to custom validation functions
@@ -96,6 +124,101 @@ This project converts an Angular v18 application (in `/app`) to the latest React
 ├── vite.config.ts
 └── README.md
 ```
+
+### Bulma CSS Framework Integration
+
+When migrating Bulma styles from Angular to React, follow these critical rules to avoid common pitfalls:
+
+#### Installation
+- **ALWAYS** install the official `bulma` npm package: `npm install bulma sass`
+- **NEVER** use CDN links or other Bulma packages (bulma-css, etc.)
+- Ensure `sass` is installed as a dev dependency for Vite to process SCSS files
+
+#### Import Syntax - CRITICAL
+- **ALWAYS** use modern Sass `@use` syntax (required for Dart Sass 2.0+)
+- **NEVER** use deprecated `@import` syntax (will be removed in Dart Sass 3.0.0)
+- **NEVER** mix `@use` and `@import` for the same module
+
+**Correct pattern:**
+```scss
+// Define custom color variables BEFORE @use
+$angular: #ac282b;
+$react: #61dafb;
+
+// Import Bulma using modern @use syntax with variable overrides
+@use 'bulma/sass' with (
+  $primary: $angular,
+  $link: $angular,
+  $info: $angular
+);
+
+// Your custom styles below
+```
+
+**WRONG patterns to avoid:**
+```scss
+// ❌ WRONG: Deprecated @import
+@import 'bulma/bulma';
+
+// ❌ WRONG: Mixing @use and @import
+@use 'bulma/sass' with (...);
+@import 'bulma/bulma';  // This will cause deprecation warnings
+
+// ❌ WRONG: Wrong import path
+@use 'bulma';  // Too vague, won't work
+@import '~bulma/css/bulma.css';  // Angular-specific, won't work in Vite
+```
+
+#### Bulma Mixins and Functions
+- **WARNING**: Not all Bulma Sass mixins are available or work the same way
+- Common issue: `@include until($tablet)` mixin may not be available
+- **Solution**: Replace Bulma responsive mixins with standard CSS media queries
+
+**Migration pattern for responsive styles:**
+```scss
+// Angular (Bulma mixin):
+@include until($tablet) {
+  .nav-menu {
+    display: none;
+  }
+}
+
+// React (standard media query):
+@media screen and (max-width: 768px) {
+  .nav-menu {
+    display: none;
+  }
+}
+```
+
+#### Variable Overrides
+- Define custom variables BEFORE the `@use` statement
+- Pass variables using the `with (...)` syntax
+- Reference Bulma's default variable names (check Bulma docs)
+
+#### Build Verification
+- After migrating Bulma styles, ALWAYS run `npm run build`
+- Check for Sass deprecation warnings in build output
+- Verify no `@import` statements remain in SCSS files
+- Test responsive behavior works as expected
+
+#### Troubleshooting Common Errors
+1. **"Cannot find module 'bulma/sass'"**
+   - Solution: Run `npm install bulma sass`
+   - Verify `node_modules/bulma` directory exists
+
+2. **"Deprecation Warning: @import is deprecated"**
+   - Solution: Replace ALL `@import 'bulma/...'` with `@use 'bulma/sass' with (...)`
+   - Search codebase for any remaining `@import` statements
+
+3. **"Undefined mixin"**
+   - Solution: Replace Bulma mixins with standard CSS (media queries, etc.)
+   - Check Bulma Sass documentation for available mixins in current version
+
+4. **Styles not applying**
+   - Verify SCSS file is imported in main.tsx: `import './styles/styles.scss'`
+   - Check Vite config has no CSS-related issues
+   - Verify class names match Bulma conventions
 
 ### Code Quality
 - Ensure TypeScript strict mode is enabled

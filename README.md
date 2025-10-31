@@ -8,9 +8,9 @@
 2. In another terminal, run the `npm install && npm run dev` command in the `app` folder to start the Angular frontend app.
 3. Open a browser and navigate to `http://localhost:4200` to see the Shop at Home app in action. Demonstrate it.
 4. Show the `.github/copilot-instructions.md` and `.github/prompts/migrate.prompt.md` files to explain how the migration will be done.
-5. The `react-output` folder (it contains the actual migrated code already, useful in case you want to show what you can obtain). If not, remove it before starting.
+5. The `react-output` folder in the `react-output` branch contains the actual migrated code already, useful in case you want to show what you can obtain without running the full demo.
 6. In GitHub Copilot chat, type `/migrate` to start the migration process from Angular to React. The `react` folder will be created and populated step by step. Stress that this is a sample pet project, but the reality is not that far, except that it will take way more time and potentially more tests and iterations. Make sure to use `Claude Sonnet 4.5` as model.
-7. Connnect to `http://localhost:5173` to see the React version of the Shop at Home app in action. Demonstrate it.
+7. Connnect to `http://localhost:5173` to see the React version of the Shop at Home app in action. Demonstrate it. If not all things are okay, showcase and iterate with prompts.
 
 ## Original README follows
 
